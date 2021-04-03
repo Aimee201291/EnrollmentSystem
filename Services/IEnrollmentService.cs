@@ -6,10 +6,10 @@ namespace EnrollmentSystem.Services
     {
         IEnumerable<Student> GetAllStudents();
 
-        bool AddStudent(Student student);
+        string AddStudent(Student student);
 
         string EditStudent(int id, Student student);
 
-        bool RemoveStudent(int id);
+        string RemoveStudent(int id);
     }
 }

@@ -20,60 +20,9 @@ namespace EnrollmentSystem.Controllers
             _enrollmentService = enrollmentService;
         }
 
-        public string validateData (Student student) {
-            string dni = student.Dni.ToString();
-            string age = student.Age.ToString();
-            string[] houses = { "Gryffindor", "Hufflepuff", "Ravenclaw", "Slytherin" };
-
-            if (student == null)
-            {
-                return "Vacío";
-            }
-            if (student.Name.Length > 20) {
-                return "La longitud del nombre no debe superar los 20 caracteres";
-            }
-            else if (!Regex.IsMatch(student.Name, @"^[a-zA-Z]+$"))
-            {
-                return "El nombre solo puede contener letras";
-            }
-            else if (student.LastName.Length > 20) 
-            {
-                return "La longitud del apellido no debe superar los 20 caracteres";
-            } 
-            else if (!Regex.IsMatch(student.LastName, @"^[a-zA-Z]+$"))
-            {
-                return "El apellido solo puede contener letras";
-            }
-            else if (student.Dni > 9999999999) {
-                return "El DNI no debe superar los 10 dígitos";
-            }
-            else if (!Regex.IsMatch(dni, @"^[0-9]+$")) 
-            {
-                return "El DNI solo puede contener números";
-            }
-            else if (student.Age > 99) {
-                return "La edad no debe superar los 2 dígitos";
-            }
-            else if (!Regex.IsMatch(age, @"^[0-9]+$")) 
-            {
-                return "La edad solo puede contener números";
-            }
-            else if (!houses.Contains(student.House)) 
-            {
-                return "Casa inválida. Solo puede elegir una de las siguientes: Gryffindor, Hufflepuff, Ravenclaw, Slytherin";
-            }
-
-            return "Valid data";
-        }
-
         [HttpGet]
         public ActionResult<IEnumerable<Student>> GetStudents()
         {
-            /*if(_enrollmentService == null)
-            {
-                return NotFound();
-            }*/
-
             var result = _enrollmentService.GetAllStudents().ToList();
             return result;
         }
@@ -81,66 +30,49 @@ namespace EnrollmentSystem.Controllers
         [HttpPost]
         public ActionResult CreateStudent(Student student)
         {
-            /*if(_enrollmentService == null)
+            string systemMessage = _enrollmentService.AddStudent(student);
+            
+            if (systemMessage == "Successful")
             {
-                return NotFound();
-            }*/
-
-            string validData = validateData(student);
-
-            if (validData == "Valid data")
-            {
-                bool successfulCreation = _enrollmentService.AddStudent(student);
-                if (successfulCreation)
-                {
-                    return Ok();
-                }
-                else
-                {
-                    return UnprocessableEntity("El valor de DNI indicado es inválido");
-                }
+                return Ok();
             }
-
-            return UnprocessableEntity(validData);
+            else
+            {
+                return UnprocessableEntity(systemMessage);
+            }
         }
 
         [HttpPut("{id}")]
         public ActionResult UpdateStudent(int id, [FromBody] Student student)
         {
-            string validData = validateData(student);
+            string systemMessage = _enrollmentService.EditStudent(id, student);
 
-            if (validData == "Valid data")
+            if (systemMessage == "Successful")
             {
-                string successfulUpdate = _enrollmentService.EditStudent(id, student);
-                if (successfulUpdate == "successful")
-                {
-                    return Ok();
-                } 
-                else if (successfulUpdate == "Not Found") 
-                {
-                    return NotFound();
-                }
-                else if (successfulUpdate == "Invalid DNI")
-                {
-                    return UnprocessableEntity("El valor de DNI indicado es inválido");
-                }
+                return Ok();
+            }
+            if (systemMessage == "Not Found") {
+                return NotFound(systemMessage);
             }
 
-            return BadRequest(validData);
+            return UnprocessableEntity(systemMessage);
+
         }
 
         [HttpDelete("{id}")]
         public ActionResult DeleteStudent(int id)
         {
-            bool successfulDelete = _enrollmentService.RemoveStudent(id);
+            string systemMessage = _enrollmentService.RemoveStudent(id);
             
-            if (successfulDelete)
+            if (systemMessage == "Successful")
             {
                 return Ok();
-            } else 
-            {
-                return NotFound();
             }
-        }        
+            if (systemMessage == "Not Found") {
+                return NotFound(systemMessage);
+            }
+
+            return UnprocessableEntity(systemMessage);
+        }       
     }
 }
