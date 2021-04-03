@@ -1,6 +1,6 @@
-#Enrollment System – La API para el sistema de inscripciones de Hogwarts
+# Enrollment System – La API para el sistema de inscripciones de Hogwarts
 
-##Prerrequisitos
+## Prerrequisitos
 
 1. Instalar el editor de código Visual Studio Code. Link: https://code.visualstudio.com/Download
 2. Instalar .NET Core 3.1 o superior. Link: https://dotnet.microsoft.com/download
@@ -10,7 +10,7 @@
 https://marketplace.visualstudio.com/items?itemName=VisualStudioExptTeam.vscodeintellicode
 6. Instalar Postman. Link: https://www.postman.com/downloads/
 
-##Probando la aplicación
+## Probando la aplicación
 
 Para probar la aplicación deberá seguir los pasos que se indican a continuación:
 1. Clonar el repositorio  EnrollmentSystem
